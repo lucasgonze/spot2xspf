@@ -23,15 +23,15 @@ def load_credentials(client_id, client_secret, config_path=None):
             return file_id, file_secret
     raise click.UsageError(
         "Spotify credentials not found. Provide --client-id/--client-secret, "
-        "set SPOTIPY_CLIENT_ID/SPOTIPY_CLIENT_SECRET, or add them to "
+        "set SPOTIFY_CLIENT_ID/SPOTIFY_CLIENT_SECRET, or add them to "
         "~/.config/spot2xspf/config."
     )
 
 
 @click.command()
 @click.argument("playlist")
-@click.option("--client-id", envvar="SPOTIPY_CLIENT_ID", default=None)
-@click.option("--client-secret", envvar="SPOTIPY_CLIENT_SECRET", default=None)
+@click.option("--client-id", envvar="SPOTIFY_CLIENT_ID", default=None)
+@click.option("--client-secret", envvar="SPOTIFY_CLIENT_SECRET", default=None)
 def main(playlist, client_id, client_secret):
     client_id, client_secret = load_credentials(client_id, client_secret)
     playlist_id = parse_playlist_id(playlist)
