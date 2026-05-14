@@ -2,6 +2,10 @@ import configparser
 from pathlib import Path
 
 import click
+import spotipy
+
+from .spotify import fetch_playlist, parse_playlist_id
+from .xspf import build_xspf
 
 
 def load_credentials(client_id, client_secret, config_path=None):
@@ -22,3 +26,17 @@ def load_credentials(client_id, client_secret, config_path=None):
         "set SPOTIPY_CLIENT_ID/SPOTIPY_CLIENT_SECRET, or add them to "
         "~/.config/spot2xspf/config."
     )
+
+
+@click.command()
+@click.argument("playlist")
+@click.option("--client-id", envvar="SPOTIPY_CLIENT_ID", default=None)
+@click.option("--client-secret", envvar="SPOTIPY_CLIENT_SECRET", default=None)
+def main(playlist, client_id, client_secret):
+    client_id, client_secret = load_credentials(client_id, client_secret)
+    playlist_id = parse_playlist_id(playlist)
+    try:
+        data = fetch_playlist(playlist_id, client_id, client_secret)
+    except spotipy.exceptions.SpotifyException as e:
+        raise click.ClickException(str(e)) from e
+    click.echo(build_xspf(data))
