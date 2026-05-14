@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spot2xspf"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = ["spotipy>=2.23", "click>=8.1"]
+
+[project.scripts]
+spot2xspf = "spot2xspf.__main__:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
