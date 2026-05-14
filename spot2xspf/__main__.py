@@ -5,6 +5,7 @@ import click
 
 
 def load_credentials(client_id, client_secret, config_path=None):
+    # client_id/client_secret already incorporate env vars via click's envvar= option
     if client_id and client_secret:
         return client_id, client_secret
     if config_path is None:
