@@ -21,6 +21,22 @@ def test_strips_whitespace():
     assert parse_playlist_id("  37i9dQZF1DXcBWIGoYBM5M  ") == "37i9dQZF1DXcBWIGoYBM5M"
 
 
+def test_invalid_uri_raises():
+    with pytest.raises(ValueError, match="Invalid Spotify playlist URI"):
+        parse_playlist_id("spotify:playlist:")
+
+
+def test_invalid_url_raises():
+    with pytest.raises(ValueError, match="Could not extract a playlist ID from URL"):
+        parse_playlist_id("https://open.spotify.com/")
+
+
+def test_url_with_trailing_slash():
+    assert parse_playlist_id(
+        "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M/"
+    ) == "37i9dQZF1DXcBWIGoYBM5M"
+
+
 MOCK_PLAYLIST = {
     "name": "Test Playlist",
     "description": "A test playlist",
@@ -67,7 +83,7 @@ def test_fetch_playlist_returns_expected_shape():
     assert track["creator"] == "Artist A"
     assert track["album"] == "Album X"
     assert track["duration"] == 210000
-    assert track["location"] == "spotify:track:aaa"
+    assert track["identifier"] == "spotify:track:aaa"
     assert track["image"] == "https://img.example.com/album.jpg"
 
 

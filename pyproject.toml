@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "spot2xspf"
 version = "0.1.0"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 dependencies = ["spotipy>=2.23", "click>=8.1"]
 
 [project.scripts]

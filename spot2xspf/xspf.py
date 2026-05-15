@@ -20,7 +20,7 @@ def build_xspf(playlist: dict) -> str:
         _add_text(track_el, "album", track.get("album"))
         if track.get("duration") is not None:
             _add_text(track_el, "duration", str(track["duration"]))
-        _add_text(track_el, "location", track.get("location"))
+        _add_text(track_el, "identifier", track.get("identifier"))
         _add_text(track_el, "image", track.get("image"))
     ET.indent(root)
     buf = io.BytesIO()

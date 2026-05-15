@@ -19,7 +19,7 @@ MOCK_PLAYLIST_DATA = {
             "creator": "Artist A",
             "album": "Album X",
             "duration": 180000,
-            "location": "spotify:track:aaa",
+            "identifier": "spotify:track:aaa",
             "image": "https://img.example.com/album.jpg",
         }
     ],
@@ -76,8 +76,10 @@ def test_cli_remote_name_writes_file(tmp_path, monkeypatch):
             ["37i9dQZF1DXcBWIGoYBM5M", "--client-id", "test_id", "--client-secret", "test_secret", "-O"],
         )
     assert result.exit_code == 0
-    assert (tmp_path / "My_Playlist.xspf").exists()
-    assert "<?xml" in (tmp_path / "My_Playlist.xspf").read_text()
+    out_file = tmp_path / "playlists" / "My_Playlist.xspf"
+    assert out_file.exists()
+    assert "<?xml" in out_file.read_text()
+    assert "playlists" in result.output
 
 
 def test_safe_filename_strips_forbidden_chars():
@@ -85,7 +87,10 @@ def test_safe_filename_strips_forbidden_chars():
     assert _safe_filename('A/B:C"D') == "A_B_C_D"
     assert _safe_filename("hello world") == "hello_world"
     assert _safe_filename("  spaces  ") == "spaces"
+    assert _safe_filename("Focus & Flow") == "Focus_Flow"
+    assert _safe_filename("a;b|c$d`e") == "a_b_c_d_e"
     assert _safe_filename("   ") == "playlist"
+    assert _safe_filename('<>:"', fallback="abc123") == "abc123"
 
 
 def test_cli_missing_credentials_exits_nonzero():

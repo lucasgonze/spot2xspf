@@ -15,7 +15,7 @@ SAMPLE_PLAYLIST = {
             "creator": "Artist A",
             "album": "Album X",
             "duration": 210000,
-            "location": "spotify:track:aaa",
+            "identifier": "spotify:track:aaa",
             "image": "https://img.example.com/album.jpg",
         }
     ],
@@ -63,7 +63,7 @@ def test_track_fields():
     assert track.find(f"{{{XSPF_NS}}}creator").text == "Artist A"
     assert track.find(f"{{{XSPF_NS}}}album").text == "Album X"
     assert track.find(f"{{{XSPF_NS}}}duration").text == "210000"
-    assert track.find(f"{{{XSPF_NS}}}location").text == "spotify:track:aaa"
+    assert track.find(f"{{{XSPF_NS}}}identifier").text == "spotify:track:aaa"
     assert track.find(f"{{{XSPF_NS}}}image").text == "https://img.example.com/album.jpg"
 
 
@@ -78,7 +78,7 @@ def test_missing_fields_omitted():
                 "creator": None,
                 "album": None,
                 "duration": None,
-                "location": "spotify:track:aaa",
+                "identifier": "spotify:track:aaa",
                 "image": None,
             }
         ],
