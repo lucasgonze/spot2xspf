@@ -1,4 +1,5 @@
 import configparser
+import re
 from pathlib import Path
 
 import click
@@ -28,15 +29,28 @@ def load_credentials(client_id, client_secret, config_path=None):
     )
 
 
+def _safe_filename(title: str) -> str:
+    name = re.sub(r'[<>:"/\\|?*]', "", title).strip()
+    return name or "playlist"
+
+
 @click.command()
 @click.argument("playlist")
 @click.option("--client-id", envvar="SPOTIFY_CLIENT_ID", default=None)
 @click.option("--client-secret", envvar="SPOTIFY_CLIENT_SECRET", default=None)
-def main(playlist, client_id, client_secret):
+@click.option("-O", "--remote-name", is_flag=True, default=False,
+              help="Write output to a file named after the playlist title.")
+def main(playlist, client_id, client_secret, remote_name):
     client_id, client_secret = load_credentials(client_id, client_secret)
     playlist_id = parse_playlist_id(playlist)
     try:
         data = fetch_playlist(playlist_id, client_id, client_secret)
     except spotipy.exceptions.SpotifyException as e:
         raise click.ClickException(str(e)) from e
-    click.echo(build_xspf(data))
+    xspf = build_xspf(data)
+    if remote_name:
+        filename = _safe_filename(data.get("title") or playlist_id) + ".xspf"
+        Path(filename).write_text(xspf)
+        click.echo(filename, err=True)
+    else:
+        click.echo(xspf)

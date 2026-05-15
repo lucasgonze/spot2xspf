@@ -67,6 +67,25 @@ def test_cli_outputs_xspf():
     assert "Track One" in result.output
 
 
+def test_cli_remote_name_writes_file(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    runner = CliRunner()
+    with patch("spot2xspf.__main__.fetch_playlist", return_value=MOCK_PLAYLIST_DATA):
+        result = runner.invoke(
+            main,
+            ["37i9dQZF1DXcBWIGoYBM5M", "--client-id", "test_id", "--client-secret", "test_secret", "-O"],
+        )
+    assert result.exit_code == 0
+    assert (tmp_path / "My Playlist.xspf").exists()
+    assert "<?xml" in (tmp_path / "My Playlist.xspf").read_text()
+
+
+def test_safe_filename_strips_forbidden_chars():
+    from spot2xspf.__main__ import _safe_filename
+    assert _safe_filename('A/B:C"D') == "ABCD"
+    assert _safe_filename("   ") == "playlist"
+
+
 def test_cli_missing_credentials_exits_nonzero():
     runner = CliRunner()
     with patch("spot2xspf.__main__.load_credentials") as mock_creds:
