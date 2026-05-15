@@ -29,9 +29,12 @@ def fetch_playlist(playlist_id: str, client_id: str, client_secret: str) -> dict
         if not page.get("next"):
             break
         offset += 100
+    owner = data.get("owner") or {}
     return {
         "title": data.get("name"),
+        "creator": owner.get("display_name") or owner.get("id"),
         "description": data.get("description"),
+        "identifier": data.get("uri"),
         "image": _largest_image(data.get("images", [])),
         "tracks": tracks,
     }

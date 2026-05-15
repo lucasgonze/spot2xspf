@@ -24,6 +24,8 @@ def test_strips_whitespace():
 MOCK_PLAYLIST = {
     "name": "Test Playlist",
     "description": "A test playlist",
+    "uri": "spotify:playlist:37i9dQZF1DXcBWIGoYBM5M",
+    "owner": {"display_name": "Jane Doe", "id": "janedoe"},
     "images": [{"url": "https://img.example.com/cover.jpg", "height": 640}],
 }
 
@@ -55,7 +57,9 @@ def test_fetch_playlist_returns_expected_shape():
         result = fetch_playlist("37i9dQZF1DXcBWIGoYBM5M", "client_id", "client_secret")
 
     assert result["title"] == "Test Playlist"
+    assert result["creator"] == "Jane Doe"
     assert result["description"] == "A test playlist"
+    assert result["identifier"] == "spotify:playlist:37i9dQZF1DXcBWIGoYBM5M"
     assert result["image"] == "https://img.example.com/cover.jpg"
     assert len(result["tracks"]) == 1
     track = result["tracks"][0]

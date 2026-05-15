@@ -30,7 +30,7 @@ def load_credentials(client_id, client_secret, config_path=None):
 
 
 def _safe_filename(title: str) -> str:
-    name = re.sub(r'[<>:"/\\|?*]', "", title).strip()
+    name = re.sub(r'[<>:"/\\|?*\s]+', "_", title).strip("_")
     return name or "playlist"
 
 

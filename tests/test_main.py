@@ -76,13 +76,15 @@ def test_cli_remote_name_writes_file(tmp_path, monkeypatch):
             ["37i9dQZF1DXcBWIGoYBM5M", "--client-id", "test_id", "--client-secret", "test_secret", "-O"],
         )
     assert result.exit_code == 0
-    assert (tmp_path / "My Playlist.xspf").exists()
-    assert "<?xml" in (tmp_path / "My Playlist.xspf").read_text()
+    assert (tmp_path / "My_Playlist.xspf").exists()
+    assert "<?xml" in (tmp_path / "My_Playlist.xspf").read_text()
 
 
 def test_safe_filename_strips_forbidden_chars():
     from spot2xspf.__main__ import _safe_filename
-    assert _safe_filename('A/B:C"D') == "ABCD"
+    assert _safe_filename('A/B:C"D') == "A_B_C_D"
+    assert _safe_filename("hello world") == "hello_world"
+    assert _safe_filename("  spaces  ") == "spaces"
     assert _safe_filename("   ") == "playlist"
 
 

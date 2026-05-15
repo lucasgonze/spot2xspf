@@ -8,7 +8,9 @@ def build_xspf(playlist: dict) -> str:
     ET.register_namespace("", XSPF_NS)
     root = ET.Element(f"{{{XSPF_NS}}}playlist", version="1")
     _add_text(root, "title", playlist.get("title"))
+    _add_text(root, "creator", playlist.get("creator"))
     _add_text(root, "annotation", playlist.get("description"))
+    _add_text(root, "identifier", playlist.get("identifier"))
     _add_text(root, "image", playlist.get("image"))
     track_list = ET.SubElement(root, f"{{{XSPF_NS}}}trackList")
     for track in playlist.get("tracks", []):

@@ -1,0 +1,13 @@
+pyproject.toml
+spot2xspf/__init__.py
+spot2xspf/__main__.py
+spot2xspf/spotify.py
+spot2xspf/xspf.py
+spot2xspf.egg-info/PKG-INFO
+spot2xspf.egg-info/SOURCES.txt
+spot2xspf.egg-info/dependency_links.txt
+spot2xspf.egg-info/entry_points.txt
+spot2xspf.egg-info/requires.txt
+spot2xspf.egg-info/top_level.txt
+tests/test_main.py
+tests/test_spotify.py

@@ -5,7 +5,9 @@ XSPF_NS = "http://xspf.org/ns/0/"
 
 SAMPLE_PLAYLIST = {
     "title": "My Playlist",
+    "creator": "Jane Doe",
     "description": "A great playlist",
+    "identifier": "spotify:playlist:37i9dQZF1DXcBWIGoYBM5M",
     "image": "https://img.example.com/cover.jpg",
     "tracks": [
         {
@@ -34,9 +36,19 @@ def test_playlist_title():
     assert root.find(f"{{{XSPF_NS}}}title").text == "My Playlist"
 
 
+def test_playlist_creator():
+    root = parse(build_xspf(SAMPLE_PLAYLIST))
+    assert root.find(f"{{{XSPF_NS}}}creator").text == "Jane Doe"
+
+
 def test_playlist_description():
     root = parse(build_xspf(SAMPLE_PLAYLIST))
     assert root.find(f"{{{XSPF_NS}}}annotation").text == "A great playlist"
+
+
+def test_playlist_identifier():
+    root = parse(build_xspf(SAMPLE_PLAYLIST))
+    assert root.find(f"{{{XSPF_NS}}}identifier").text == "spotify:playlist:37i9dQZF1DXcBWIGoYBM5M"
 
 
 def test_playlist_image():
