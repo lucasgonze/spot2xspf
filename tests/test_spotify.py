@@ -64,6 +64,16 @@ MOCK_PAGE = {
 }
 
 
+def test_fetch_playlist_unescapes_html_description():
+    html_playlist = {**MOCK_PLAYLIST, "description": "Booker T. &amp; the MG&#x27;s"}
+    with patch("spot2xspf.spotify.spotipy.Spotify") as MockSpotify:
+        sp = MockSpotify.return_value
+        sp.playlist.return_value = html_playlist
+        sp.playlist_items.return_value = MOCK_PAGE
+        result = fetch_playlist("37i9dQZF1DXcBWIGoYBM5M", "client_id", "client_secret")
+    assert result["description"] == "Booker T. & the MG's"
+
+
 def test_fetch_playlist_returns_expected_shape():
     with patch("spot2xspf.spotify.spotipy.Spotify") as MockSpotify:
         sp = MockSpotify.return_value

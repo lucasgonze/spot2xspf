@@ -44,11 +44,11 @@ def _safe_filename(title: str, fallback: str = "playlist") -> str:
               help="Spotify API client ID. Falls back to SPOTIFY_CLIENT_ID env var or ~/.config/spot2xspf/config.")
 @click.option("--client-secret", envvar="SPOTIFY_CLIENT_SECRET", default=None,
               help="Spotify API client secret. Falls back to SPOTIFY_CLIENT_SECRET env var or ~/.config/spot2xspf/config.")
-@click.option("-O", "--remote-name", is_flag=True, default=False,
+@click.option("-O", "--save", is_flag=True, default=False,
               help="Write output to playlists/<title>.xspf instead of stdout. "
                    "Spaces and special characters in the title are replaced with underscores. "
                    "The full path is printed to stderr.")
-def main(playlist, client_id, client_secret, remote_name):
+def main(playlist, client_id, client_secret, save):
     """Convert a Spotify playlist to XSPF format.
 
     PLAYLIST can be a Spotify playlist ID, URI (spotify:playlist:...), or HTTPS URL.
@@ -59,12 +59,18 @@ def main(playlist, client_id, client_secret, remote_name):
         playlist_id = parse_playlist_id(playlist)
     except ValueError as e:
         raise click.UsageError(str(e)) from e
+    click.echo("Fetching playlist…", err=True)
     try:
         data = fetch_playlist(playlist_id, client_id, client_secret)
     except spotipy.exceptions.SpotifyException as e:
+        if e.http_status == 404:
+            raise click.ClickException(
+                "Playlist not found. If it is private, client credentials cannot access it."
+            ) from e
         raise click.ClickException(str(e)) from e
+    click.echo(f"{len(data['tracks'])} tracks.", err=True)
     xspf = build_xspf(data)
-    if remote_name:
+    if save:
         out_dir = Path("playlists")
         out_dir.mkdir(exist_ok=True)
         filename = _safe_filename(data.get("title") or "", fallback=playlist_id) + ".xspf"

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from html import unescape
 from urllib.parse import urlparse
 
 import spotipy
@@ -40,7 +41,7 @@ def fetch_playlist(playlist_id: str, client_id: str, client_secret: str) -> dict
     return {
         "title": data.get("name"),
         "creator": owner.get("display_name") or owner.get("id"),
-        "description": data.get("description"),
+        "description": unescape(desc) if (desc := data.get("description")) else None,
         "identifier": data.get("uri"),
         "image": _largest_image(data.get("images", [])),
         "tracks": tracks,

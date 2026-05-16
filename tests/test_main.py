@@ -5,6 +5,7 @@ from click import UsageError
 from spot2xspf.__main__ import load_credentials
 
 import click
+import spotipy.exceptions
 from unittest.mock import patch
 from click.testing import CliRunner
 from spot2xspf.__main__ import main
@@ -67,7 +68,7 @@ def test_cli_outputs_xspf():
     assert "Track One" in result.output
 
 
-def test_cli_remote_name_writes_file(tmp_path, monkeypatch):
+def test_cli_save_writes_file(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     runner = CliRunner()
     with patch("spot2xspf.__main__.fetch_playlist", return_value=MOCK_PLAYLIST_DATA):
@@ -91,6 +92,29 @@ def test_safe_filename_strips_forbidden_chars():
     assert _safe_filename("a;b|c$d`e") == "a_b_c_d_e"
     assert _safe_filename("   ") == "playlist"
     assert _safe_filename('<>:"', fallback="abc123") == "abc123"
+
+
+def test_cli_shows_progress():
+    runner = CliRunner()
+    with patch("spot2xspf.__main__.fetch_playlist", return_value=MOCK_PLAYLIST_DATA):
+        result = runner.invoke(
+            main,
+            ["37i9dQZF1DXcBWIGoYBM5M", "--client-id", "test_id", "--client-secret", "test_secret"],
+        )
+    assert "Fetching" in result.output
+    assert "1 tracks" in result.output
+
+
+def test_cli_404_gives_friendly_error():
+    runner = CliRunner()
+    exc = spotipy.exceptions.SpotifyException(http_status=404, code=-1, msg="not found")
+    with patch("spot2xspf.__main__.fetch_playlist", side_effect=exc):
+        result = runner.invoke(
+            main,
+            ["37i9dQZF1DXcBWIGoYBM5M", "--client-id", "test_id", "--client-secret", "test_secret"],
+        )
+    assert result.exit_code != 0
+    assert "private" in result.output
 
 
 def test_cli_missing_credentials_exits_nonzero():
