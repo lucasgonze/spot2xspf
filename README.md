@@ -29,11 +29,13 @@ spot2xspf uses the Spotify Web API with [client credentials](https://developer.s
 1. Go to [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard) and create an app.
 2. Copy the **Client ID** and **Client Secret**.
 
-Credentials are read from (in order of priority):
+When using the CLI, credentials are read from (in order of priority):
 
 1. `--client-id` / `--client-secret` flags
 2. `SPOTIFY_CLIENT_ID` / `SPOTIFY_CLIENT_SECRET` environment variables
 3. `~/.config/spot2xspf/config`:
+
+When using the Python API, pass credentials directly to `convert()` or `fetch_playlist()`.
 
 ```ini
 [spotify]
@@ -87,6 +89,35 @@ Redirect stdout to a specific file:
 
 ```sh
 spot2xspf 37i9dQZF1DXcBWIGoYBM5M > my_playlist.xspf
+```
+
+## Python API
+
+The package is importable and can be used directly from Python code.
+
+### High-level
+
+```python
+import spot2xspf
+
+xspf = spot2xspf.convert(
+    "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M",
+    client_id="YOUR_CLIENT_ID",
+    client_secret="YOUR_CLIENT_SECRET",
+)
+```
+
+`convert()` accepts a playlist ID, URI, or HTTPS URL and returns XSPF as a string.
+
+### Lower-level
+
+```python
+from spot2xspf import fetch_playlist, parse_playlist_id, build_xspf
+
+playlist_id = parse_playlist_id("spotify:playlist:37i9dQZF1DXcBWIGoYBM5M")
+data = fetch_playlist(playlist_id, client_id, client_secret)
+# data is a plain dict — inspect or modify it before serializing
+xspf = build_xspf(data)
 ```
 
 ## Output format
