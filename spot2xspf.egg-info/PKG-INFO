@@ -1,8 +1,0 @@
-Metadata-Version: 2.4
-Name: spot2xspf
-Version: 0.1.0
-Requires-Python: >=3.10
-Requires-Dist: spotipy>=2.23
-Requires-Dist: click>=8.1
-Provides-Extra: dev
-Requires-Dist: pytest>=7; extra == "dev"

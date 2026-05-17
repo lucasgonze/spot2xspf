@@ -1,2 +1,0 @@
-[console_scripts]
-spot2xspf = spot2xspf.__main__:main
